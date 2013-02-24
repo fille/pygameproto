@@ -25,7 +25,7 @@ class Gubbe(pygame.sprite.Sprite):
 		self.image = pygame.Surface((20,20))
 		self.rect = self.image.get_rect();
 		self.rect.topleft = initial_position;
-		self.image.fill((0,50,200));
+		self.image.fill((0,10,200));
 		self.max_jump = 10;
 		self.jumpacc = 0.0;
 		self.jumpMe = 0
@@ -47,50 +47,54 @@ class Gubbe(pygame.sprite.Sprite):
 			self.walk_acc += 0.1
 	def collide(self):
 		for wall in self.walls:
-			if self.rect.topleft[1] < wall.rect.bottomleft[1]:
-		  		self.typehit = 1
-		  	
+			if self.rect.topleft[1] < wall.rect.bottomleft[1] and self.rect.topleft[0] < wall.rect.bottomright[0]:
+				if self.jumpMe  != 1 :				
+					self.typehit = 1
+					self.jumpacc = -0.8
+			if self.rect.bottomleft[1] > wall.rect.topleft[1] and self.rect.bottomright[0] < wall.rect.topright[0]:
+				if self.jumpMe  != 1 :				
+					self.jumpacc = 0
+				
+				
+		  		
 		
 	def update(self):
 		
 		self.collide()
-		moveX = 0;
-		moveY = 0;
+		moveX = self.rect.center[0];
+		moveY = self.rect.center[1];
+		newdis = 0; 
 		if self.jumpMe == 1:
-			if self.jumpacc > 0.0 :
-				if self.typehit == 1:
-					print "Hej"
-					self.jumpacc = 0.1
-				newdis= self.jumpacc * self.max_jump;
-				moveY += newdis
-				self.jumpacc -= 0.1
-				if self.jumpacc == 0:
-					self.jumpacc -=0.1
-			
-		        elif self.jumpacc < 0.0:
-				newdis= self.jumpacc * self.max_jump;
-				moveY += newdis
-				self.jumpacc -= 0.1
-				if self.jumpacc < -1.0:
-					self.jumpacc = 0
-					self.jumpMe = 0
+				print self.jumpacc
+				if self.jumpacc > 0.0 :
+					newdis= self.jumpacc * self.max_jump;
+					
+					self.jumpacc -= 0.1
+				if self.jumpacc < 0.0:
+					self.jumpMe  = 0
+					
+						
+		
+		else:
+			newdis= self.jumpacc * self.max_jump;
+			self.jumpacc -= 0.1
 		
 			 
 		newX = self.walk_acc * self.max_walk
 	
-		moveY = self.rect.center[1] - moveY;
+		moveY = self.rect.center[1] - newdis;
 		if self.dir == 2:
 			moveX = self.rect.center[0] -newX;
 		elif self.dir == 1: 
 			moveX = self.rect.center[0] +newX;
-		self.rect.center = (moveX,moveY)
+		
 		if self.run == 0 :		
 			if self.walk_acc > 0.1 :		
 				self.walk_acc -= 0.1
 			if self.walk_acc < -0.1 :
 				print self.walk_acc 		
 				self.walk_acc += 0.1	
-		
+		self.rect.center = (moveX,moveY)
 		self.run = 0;
 		self.typehit = 0;
 
@@ -101,8 +105,8 @@ def main():
  background = pygame.Surface(screen.get_size())
  background = background.convert()
 
- walla = Wall((20,360),400)
- obj = Gubbe((100,400),[walla])
+ walla = Wall((10,380),400)
+ obj = Gubbe((100,300),[walla])
  sprites =  pygame.sprite.Group((obj,walla))
  running = True
  while(running):
