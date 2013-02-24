@@ -54,9 +54,9 @@ class Gubbe(pygame.sprite.Sprite):
 			if self.rect.bottomleft[1] > wall.rect.topleft[1] and self.rect.bottomright[0] < wall.rect.topright[0]:
 				if self.jumpMe  != 1 :				
 					self.jumpacc = 0
-				
-				
-		  		
+			if self.rect.bottomleft[0] < wall.rect.topleft[0] and self.rect.bottomleft[1] < wall.rect.bottomright[1]:
+				if self.jumpMe  != 1 :
+					self.jumpacc = -0.8
 		
 	def update(self):
 		
@@ -105,7 +105,8 @@ def main():
  background = pygame.Surface(screen.get_size())
  background = background.convert()
 
- walla = Wall((10,380),400)
+ walla = Wall((100,380),200)
+ wall2 = Wall((300,300),400)
  obj = Gubbe((100,300),[walla])
  sprites =  pygame.sprite.Group((obj,walla))
  running = True
