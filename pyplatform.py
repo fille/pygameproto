@@ -1,7 +1,6 @@
 import os, sys
 import pygame
 import math
-import time
 from decimal import Decimal
 from pygame.locals import *
 
@@ -54,7 +53,11 @@ class Gubbe(pygame.sprite.Sprite):
 			if self.rect.bottomleft[1] > wall.rect.topleft[1] and self.rect.bottomright[0] < wall.rect.topright[0]:
 				if self.jumpMe  != 1 :				
 					self.jumpacc = 0
-			if self.rect.bottomleft[0] < wall.rect.topleft[0] and self.rect.bottomleft[1] < wall.rect.bottomright[1]:
+			if self.rect.bottomleft[0] < wall.rect.topleft[0] and self.rect.bottomright[1] < wall.rect.bottomright[1]:
+				if self.jumpMe  != 1 :
+					self.jumpacc = -0.8
+			if self.rect.topleft[0] < wall.rect.bottomleft[0] and self.rect.bottomright[1] > wall.rect.bottomright[0]:
+				print "hej"
 				if self.jumpMe  != 1 :
 					self.jumpacc = -0.8
 		
@@ -104,14 +107,18 @@ def main():
  screen = pygame.display.set_mode((640, 480))
  background = pygame.Surface(screen.get_size())
  background = background.convert()
-
+ myfont = pygame.font.SysFont("Arial MS", 40)
  walla = Wall((100,380),200)
  wall2 = Wall((300,300),400)
  obj = Gubbe((100,300),[walla])
  sprites =  pygame.sprite.Group((obj,walla))
  running = True
+ clock = pygame.time.Clock()
  while(running):
-  time.sleep(0.1)
+  clock.tick(60)
+  screen.fill(pygame.Color("black"))
+  label = myfont.render("fps: "+str(int(clock.get_fps())), 1, (255,0,0)) 
+  screen.blit(label, (50, 50))
   sprites.clear(screen,background);
   sprites.update();
   sprites.draw(screen)
