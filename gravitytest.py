@@ -5,7 +5,7 @@ import time
 from decimal import Decimal
 from pygame.locals import *
 
-MAX_speed = 10
+MAX_speed = 3
 
 class Planet(pygame.sprite.Sprite):
 	def __init__(self,initial_position,size,objs,id):
@@ -37,9 +37,9 @@ class Planet(pygame.sprite.Sprite):
 			return 20;
 	def getWeight(self):
 		if self.type == 1:
-			return 1;
+			return 0.01
 		if self.type == 2:
-			return 10;
+			return 0.1;
 	def update(self):
 		for current in self.plants : 	
 			 current.rect.center =self.force(current)    
@@ -65,11 +65,11 @@ class Planet(pygame.sprite.Sprite):
 				r = distance**2
 			        if r != 0:
 				 force = mass / r
-				 	
-			  	 rateX =  MAX_speed *((force)*(diffX *0.01))
-			  	 rateY =  MAX_speed *((force)*(diffY *0.01))
-				 
-				 x += rateX			
+				 speed = MAX_speed *(force)
+			  	 rateX =  speed*(diffX/distance)
+			  	 rateY =  speed *(diffY/distance)
+				 print str(rateX)
+				 x += rateX		
 				 y += rateY	
 				if current.id != self.id:
 				 print current.id  + "-" + self.id
@@ -85,29 +85,30 @@ def main():
  background = pygame.Surface(screen.get_size())
  background = background.convert()
  objs = []
- #plan1  = Planet([300,200],1,objs,"a")
- #plan2  = Planet([200,40],1,objs,"b")
- #plan3  = Planet([300,300],1,objs,"c")
- #plan4  = Planet([300,300],1,objs,"d")
- #plan5  = Planet([500,300],1,objs,"e")
+ plan1  = Planet([300,200],1,objs,"a")
+ plan2  = Planet([200,40],1,objs,"b")
+ plan3  = Planet([300,300],1,objs,"c")
+ plan4  = Planet([300,300],1,objs,"d")
+ plan5  = Planet([500,300],1,objs,"e")
  plan6  = Planet([320,220],2,objs,"f")
  plan7  = Planet([30,400],1,objs,"g")
- #objs.append(plan1)
- #objs.append(plan2)
- #objs.append(plan3)
- #objs.append(plan4)
- #objs.append(plan5)
+ objs.append(plan1)
+ objs.append(plan2)
+ objs.append(plan3)
+ objs.append(plan4)
+ objs.append(plan5)
 
  objs.append(plan7)
  objs.append(plan6)
- circlesprite =  pygame.sprite.Group((plan6,plan7));
+ circlesprite =  pygame.sprite.Group((plan1,plan2,plan3,plan4,plan5,plan6,plan7));
 
+ clock = pygame.time.Clock()
  while 1 :
+  clock.tick(20)
   circlesprite.clear(screen,background);
   circlesprite.update();
   circlesprite.draw(screen)
   pygame.display.flip()
-  time.sleep(0.1)
 
 if __name__ == "__main__":
     main()
