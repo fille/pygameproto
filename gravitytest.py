@@ -1,6 +1,7 @@
 import os, sys
 import pygame
 import math
+import random
 import time
 from decimal import Decimal
 from pygame.locals import *
@@ -8,7 +9,7 @@ from pygame.locals import *
 MAX_speed = 3
 
 class Planet(pygame.sprite.Sprite):
-	def __init__(self,initial_position,size,objs,id):
+	def __init__(self,initial_position,size,objs,id,color):
 		self.id = id
 		self.weight = 10
 		self.type = size
@@ -21,7 +22,7 @@ class Planet(pygame.sprite.Sprite):
 		self.rect = self.image.get_rect();
 		self.rect.topleft = initial_position;
 		self.image.fill((40,0,0));
-		pygame.draw.circle(self.image,(255,0,0),(self.getsizeCircle(),self.getsizeCircle()),self.getsizeCircle(),self.getsizeCircle())
+		pygame.draw.circle(self.image,color,(self.getsizeCircle(),self.getsizeCircle()),self.getsizeCircle(),self.getsizeCircle())
 		self.area = screen.get_rect()
 
 	def getsizeRect(self):
@@ -37,13 +38,19 @@ class Planet(pygame.sprite.Sprite):
 			return 20;
 	def getWeight(self):
 		if self.type == 1:
-			return 0.01
+			return 10
 		if self.type == 2:
-			return 0.1;
+			return 1000;
 	def update(self):
-		for current in self.plants : 	
-			 current.rect.center =self.force(current)    
+		for current in self.plants :	
 			
+			if current.type != 2:
+				 current.rect.center =self.force(current)
+		
+		if self.type != 2:
+		 self.rect.center[0]+1
+		 self.rect.center[1]+1
+		 	
 			
 			#print current.id + ":" +str(current.rect.center[0])
 		
@@ -66,14 +73,14 @@ class Planet(pygame.sprite.Sprite):
 			        if r != 0:
 				 force = mass / r
 				 speed = MAX_speed *(force)
-			  	 rateX =  speed*(diffX/distance)
+			  	 rateX =  speed*(diffX/distance) 
 			  	 rateY =  speed *(diffY/distance)
-				 print str(rateX)
-				 x += rateX		
-				 y += rateY	
-				if current.id != self.id:
-				 print current.id  + "-" + self.id
-				 return (x,y)
+			
+				 x += rateX 	
+				 y += rateY 
+				if current != self:
+					 return (x,y)
+						    
 				else:
 				 return current.rect.center
 						    
@@ -85,26 +92,19 @@ def main():
  background = pygame.Surface(screen.get_size())
  background = background.convert()
  objs = []
- plan1  = Planet([300,200],1,objs,"a")
- plan2  = Planet([200,40],1,objs,"b")
- plan3  = Planet([300,300],1,objs,"c")
- plan4  = Planet([300,300],1,objs,"d")
- plan5  = Planet([500,300],1,objs,"e")
- plan6  = Planet([320,220],2,objs,"f")
- plan7  = Planet([30,400],1,objs,"g")
- objs.append(plan1)
- objs.append(plan2)
- objs.append(plan3)
- objs.append(plan4)
- objs.append(plan5)
+ i = 0
 
- objs.append(plan7)
- objs.append(plan6)
- circlesprite =  pygame.sprite.Group((plan1,plan2,plan3,plan4,plan5,plan6,plan7));
+ plan2  = Planet([320,200],2,objs,"a",(200,0,0))
+ objs.append(plan2)
+ for i in  range(0,100)	 :
+ 	plan1  = Planet([random.randint(0,640),random.randint(0,480)],1,objs,"a",(0,0,200))
+ 	objs.append(plan1)
+
+ circlesprite =  pygame.sprite.Group(objs);
 
  clock = pygame.time.Clock()
  while 1 :
-  clock.tick(20)
+  clock.tick(60)
   circlesprite.clear(screen,background);
   circlesprite.update();
   circlesprite.draw(screen)
